@@ -1,55 +1,67 @@
-$(function() {
+$(function () {
   let form = layui.form
   let layer = layui.layer
   form.verify({
-    nickname:function(value) {
-      if(value.length > 6) {
+    nickname: function (value) {
+      if (value.length > 6) {
         return '昵称长度在1-6字符之间'
       }
     }
   })
 
-  Userinfo()
 
-  // 初始化用户的信息
-  function Userinfo() {
+  // 获取用户的信息
+  const Userinfo = () => {
     $.ajax({
-      method:'GET',
-      url:'/my/userinfo',
-      success:function(res) {
-        if(res.status !== 0) {
+      method: 'GET',
+      url: '/my/userinfo',
+      success(res) {
+        if (res.status !== 0) {
           return layer.msg('获取用户信息失败')
         }
-        console.log(res)
+        // console.log(res)
         // 调用 form.val()快速为表单赋值
-        form.val('formUserInfo',res.data)
+        // 给表单进行回显数据
+        // form.val(‘你要指定那个表单’，‘你要指定的那个值’)
+        form.val('formUserInfo', res.data)
       }
     })
   }
+  Userinfo()
+
 
   // 重置表单的数据
-  $('#btnRest').on('click',function(e) {
+  $('#btnRest').on('click', function (e) {
+    // 阻止默认行为
     e.preventDefault()
+    // 重新刷新用户信息
     Userinfo()
   })
 
+
   // 监听表单的提交事件
-  $('.layui-form').on('click',function(e) {
+  $('.layui-form').on('click', function (e) {
     e.preventDefault()
+
+    // $(this).serialize() => key=value&ley=value
+    // form.val('formUserInfo') => {key:value,key:value}
     // 发起ajax请求
     $.ajax({
-      method:'POST',
-      url:'/my/userinfo',
-      data:$(this).serialize(),
-      success:function(res) {
-        if(res.status !== 0) {
+      method: 'PUT',
+      url: '/my/userinfo',
+      // @=>%40进行了专一操作 （空格 =》 20%）
+      data: form.val('formUserInfo'),
+      success: function (res) {
+        if (res.status !== 0) {
           return layer.msg('更新信息失败')
         }
-        layer.msg('更新信息成功')
-        // 调用父页面中的方法，重新渲染头像和用户信息
-const getUserInfo = () => {
-        window.parent.getUserInfo()
-      }
-    })
+        // 刷新整体页面
+          window.parent.getUserInfo()
+          layer.msg('更新信息成功')
+        }
+      })
   })
 })
+
+
+

@@ -6,7 +6,7 @@ $(function(){
 })
 
 // 获取用户的基本信息
-const getUserInfo = () => {
+function getUserInfo() {
   $.ajax({
     method: 'GET',
     url:'/my/userinfo',
@@ -29,12 +29,12 @@ const getUserInfo = () => {
 const renderArr =(res) => {
   if(res.user_pic) {
     $('.text_avatar').hide()
-    $('.user-box img').css('src',res.user_pic)
+    $('.user-box img').attr('src',res.user_pic).show()
   }else {
     $('.layui-nav-img').hide()
     const name = res.data.nickname || res.data.username
     const char = name[0].toUpperCase()
-    $('.text_avatar').html(char)
+    $('.text_avatar').css('display','flex').html(char).show()
   }
   $('.text').html(`欢迎&nbsp;&nbsp;${res.data.username}`)
 }

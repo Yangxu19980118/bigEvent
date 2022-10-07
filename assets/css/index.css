@@ -41,6 +41,7 @@ a {
 .user-box .layui-nav-img {
   width: 40px;
   height: 40px;
+  display: none;
 }
 
 .user-box .text-avatar {
@@ -57,6 +58,7 @@ a {
   top: 4px;
   margin: 15px auto;
   margin-right: 5px;
+  display: none;
 
 }
 

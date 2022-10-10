@@ -38,8 +38,7 @@ $(function() {
   function initTable () {
     $.ajax({
       method:'GET',
-      url:'/my/article/list',
-      data:q,
+      url:`/my/article/list?pagenum=${q.pagenum}&pagesize=${q.pagesize}&cate_id${q.cate_id}&state${q.state}`,
       success: function(res) {
         if(res.status !== 0) {
           return layer.msg('获取文章列表失败')
@@ -53,41 +52,43 @@ $(function() {
     })
   }
 
-
-
+ 
 
   // 初始化文章分类的方法
   function initCate() {
     $.ajax({
       method:'GET',
-      url:'/my/article/list',
+      url:'/my/cate/list',
       success:function(res) {
-        if(res.status !== 0) {
+        if(res.code !== 0) {
           return layer.msg('获取数据失败')
         }
         // 调用模板引擎渲染分类的可选项
         let htmlStr = template('tpl-cate',res)
         $('[name=cate_id]').html(htmlStr)
         // 通过layui重新渲染表单区域的ui结构
+        // render() 重新渲染区域
         form.render()
 
       }
     })
   }
 
+
   // 为筛选表单绑定submit事件
   $('#form-search').on('submit',function(e) {
     e.preventDefault()
     // 获取表单中的选中项的值
-    let cate_id = $('[name=cate_id]').val()
-    let state = $('[name=state]').val()
+    const cate_id = $('[name=cate_id]').val()
+    const state = $('[name=state]').val()
     // 为查询参数对象  q  中对应的属性值赋值
     q.cate_id = cate_id
     q.state = state
-    // 根据最新的筛选条件，重新渲染表格的数据
+    // 重新渲染表格的数据
     initTable()
-
   })
+
+
 
   // 定义渲染分页的方法
   function renderPage(total) {
@@ -117,37 +118,40 @@ $(function() {
         q.pagenum = obj.curr  
         // 把最新的条目数，赋值到q这个查询参数对象pagesize属性中
         q.pagesize = obj.limit
-        // 根据最新的q获取对应的数据列表，并渲染表格
+        // 如果直接调用会导致死循环
+        // initTable()
+        // 应该是用户主动切换页码值得时候去加载列表
         if(!first){
           initTable()
         }
       }
-
-
-
     })
   }
+
+
+
+
+
 
   // 通过代理的形式，为删除按钮绑定点击事件处理函数
   $('tbody').on('click','.btn-delete',function() {
     // 获取删除按钮的个数
-    let len = $('.btn-delete').length
+    const len = $('.btn-delete').length
     // 获取文章的id
-    let id = $(this).attr('data-id')
+    const id = $(this).attr('data-id')
     // 询问用户是否要删除数据
     layer.confirm('确认删除?', {icon: 3, title:'提示'}, function(index){
       $.ajax({
-        method:'GET',
+        method:'DELETE',
         url:'/my/article/info' + id,
-        success: function(res) {
-          if(res.status !== 0) {
-            return layer.msg('删除文章失败')
-          }
+        success(res){
+          if(res.status !== 0) return layer.msg('删除文章失败')
           layer.msg('删除成功')
 
           if(len == 1) {
             // 如果len 的数值等于1,证明删除完毕之后，页面上旧没有任何数值
             // 页码值最小必须是1
+            // 如果当前已经是第一页，那就不减
             q.pagenum = q.pagenum === 1?1 : q.pagenum - 1
           }
           initTable()

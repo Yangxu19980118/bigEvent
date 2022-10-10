@@ -31,12 +31,14 @@
         <div class="layui-form-item">
           <label class="layui-form-label">文章类别</label>
           <div class="layui-input-block">
+
             <select name="cate_id" lay-verify="required">
 
             </select>
+
           </div>
         </div>
-
+ 
         <!-- 第三行 -->
         <div class="layui-form-item">
           <!-- 左侧的 label -->
@@ -65,7 +67,7 @@
               <!-- 选择封面按钮 -->
               <button type="button" class="layui-btn layui-btn-danger" id="btnChooseImage">选择封面</button>
               <!-- 隐藏的文件选择框 -->
-              <input type="text"  id="coverFile" style="display:none;" accept="image/png,image/jpeg,image/gif">
+              <input type="file"  id="file" style="display:none;" accept="image/png,image/jpeg,image/gif">
             </div>
           </div>
         </div>
@@ -73,7 +75,7 @@
         <!-- 第五行 -->
         <div class="layui-form-item">
           <div class="layui-input-block">
-            <button class="layui-btn" lay-submit>发布</button> 
+            <button class="layui-btn" lay-submit  id="btnSave1">发布</button> 
             <button class="layui-btn  layui-btn-primary" lay-submit id="btnSave2">存为草稿</button>
           </div>
         </div>
@@ -84,7 +86,7 @@
   <script type="text/html" id="tpl-cate">
     <option value="">请选择文章类别</option>
     {{each data}}
-    <option value="{{$value.Id}}">{{$value.name}}</option>
+    <option value="{{$value.id}}">{{$value.cate_name}}</option>
     {{/each}}
   </script>
 
